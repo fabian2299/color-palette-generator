@@ -119,6 +119,8 @@ const Input = styled.input`
 const FlexInput = styled.div`
   display: flex;
   margin-top: 8px;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 `;
 const Container = styled.div`
