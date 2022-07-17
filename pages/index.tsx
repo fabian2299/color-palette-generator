@@ -1,4 +1,5 @@
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { CompactPicker } from "react-color";
 import styled from "styled-components";
 import Circles from "../components/Circles";
@@ -7,7 +8,7 @@ import NameForm from "../components/NameForm";
 import PaletteList from "../components/PaletteList";
 
 export interface ICircle {
-  id: string;
+  circleId: string;
   color: string;
 }
 
@@ -18,38 +19,46 @@ export interface ICircleList {
 }
 
 export default function Home() {
+  const [circleList, setCircleList] = useState<ICircleList[] | []>([]);
+
   const [compactPickerColor, setCompactPickerColor] = useState("#FCDC00");
   const [activeCircle, setActiveCircle] = useState<ICircle>({
-    id: "",
+    circleId: "",
     color: "",
   });
   const [circles, setCircles] = useState<ICircle[]>([
-    { id: "1", color: "" },
-    { id: "2", color: "" },
-    { id: "3", color: "" },
-    { id: "4", color: "" },
-    { id: "5", color: "" },
+    { circleId: "1", color: "" },
+    { circleId: "2", color: "" },
+    { circleId: "3", color: "" },
+    { circleId: "4", color: "" },
+    { circleId: "5", color: "" },
   ]);
   const [nameList, setNameList] = useState("");
-  const [circleList, setCircleList] = useState<ICircleList[] | []>(() => {
-    if (typeof window !== "undefined") {
-      const localStorageCircleList = localStorage.getItem("circleList");
-      if (localStorageCircleList) {
-        return JSON.parse(localStorageCircleList);
-      }
-    }
-    return [];
-  });
 
   const handleChangeColor = (color: string) => {
     setCompactPickerColor(color);
     setCircles(() => {
       const newCircles = circles.map((circle) =>
-        circle.id === activeCircle.id ? { ...circle, color } : circle
+        circle.circleId === activeCircle.circleId
+          ? { ...circle, color }
+          : circle
       );
       return newCircles;
     });
   };
+
+  const fetchCircles = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.API_URL}/api`);
+      setCircleList(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCircles();
+  }, []);
 
   return (
     <Container>
@@ -74,9 +83,9 @@ export default function Home() {
           setNameList={setNameList}
           setActiveCircle={setActiveCircle}
           setCircles={setCircles}
-          setCircleList={setCircleList}
-          circleList={circleList}
           circles={circles}
+          circleList={circleList}
+          setCircleList={setCircleList}
         />
       </Flex>
 

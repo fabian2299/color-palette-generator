@@ -1,26 +1,36 @@
 import { TrashIcon } from "@heroicons/react/outline";
+import axios from "axios";
 import type { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { ICircle, ICircleList } from "../pages/index";
 
 interface Props {
-  circleList: ICircleList[];
-  setCircleList: Dispatch<SetStateAction<ICircleList[] | []>>;
   setCircles: Dispatch<SetStateAction<ICircle[]>>;
+  circleList: ICircleList[];
+  setCircleList: Dispatch<SetStateAction<ICircleList[]>>;
 }
 
 export default function PaletteList({
   circleList,
-  setCircles,
   setCircleList,
+  setCircles,
 }: Props) {
-  const deletePalette = (id: string) => {
-    setCircleList(circleList.filter((circle) => circle.id !== id));
-    localStorage.removeItem(id);
+  const deletePalette = async (id: string) => {
+    try {
+      await axios.delete(`${process.env.API_URL}/api/{id}`);
+      setCircleList(circleList.filter((circle) => circle.id !== id));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClickPalette = (id: string) => {
-    setCircles(circleList.find((circle) => circle.id === id)!.circles);
+    const circles = circleList.find((circle) => circle.id === id)!.circles;
+    const newCircles = circles.map(({ circleId, color }) => ({
+      circleId,
+      color,
+    }));
+    setCircles(newCircles);
   };
 
   return (
@@ -36,8 +46,8 @@ export default function PaletteList({
               </NameDeleteWrapper>
 
               <CircleListDiv onClick={() => handleClickPalette(id)}>
-                {circles.map(({ id, color }) => (
-                  <Circle key={id} color={color} />
+                {circles.map(({ circleId, color }) => (
+                  <Circle key={circleId} color={color} />
                 ))}
               </CircleListDiv>
             </div>

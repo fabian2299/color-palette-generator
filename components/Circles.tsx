@@ -16,19 +16,23 @@ export default function Circles({
   setActiveCircle,
 }: Props) {
   const handleClick = (id: string) => {
-    const circle = circles.find((circle) => circle.id === id);
+    const circle = circles.find((circle) => circle.circleId === id);
     setActiveCircle(circle!);
   };
 
   return (
     <CircleList>
-      {circles.map(({ id, color }) => {
+      {circles.map(({ circleId, color }) => {
         return (
           <Circle
-            key={id}
-            onClick={() => handleClick(id)}
+            key={circleId}
+            onClick={() => handleClick(circleId)}
             color={color}
-            className={activeCircle.id === id ? styles.active : styles.inactive}
+            className={
+              activeCircle.circleId === circleId
+                ? styles.active
+                : styles.inactive
+            }
           >
             {color ? "" : <CircleIcon />}
           </Circle>

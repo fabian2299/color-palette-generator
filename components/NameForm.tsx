@@ -1,50 +1,52 @@
 import { PlusIcon } from "@heroicons/react/outline";
-import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import axios from "axios";
+import { Dispatch, SetStateAction } from "react";
 import styled from "styled-components";
 import { ICircle, ICircleList } from "../pages/index";
 
 interface Props {
   nameList: string;
-  circleList: ICircleList[];
   circles: ICircle[];
+  circleList: ICircleList[];
   setNameList: Dispatch<SetStateAction<string>>;
-  setCircleList: Dispatch<SetStateAction<ICircleList[] | []>>;
   setCircles: Dispatch<SetStateAction<ICircle[]>>;
   setActiveCircle: Dispatch<SetStateAction<ICircle>>;
+  setCircleList: Dispatch<SetStateAction<ICircleList[]>>;
 }
 
 export default function NameForm({
   nameList,
-  circleList,
   circles,
   setNameList,
-  setCircleList,
+  circleList,
   setCircles,
   setActiveCircle,
+  setCircleList,
 }: Props) {
-  const saveInLocalStorage = useCallback(() => {
-    localStorage.setItem("circleList", JSON.stringify(circleList));
-  }, [circleList]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!nameList) return;
-    const circleListObj = { nameList, circles, id: Date.now().toString() };
-    setCircleList([...circleList, circleListObj]);
+    const circleListObj = { nameList, circles };
+    try {
+      const { data } = await axios.post(
+        `${process.env.API_URL}/api`,
+        circleListObj
+      );
+
+      setCircleList([...circleList, data]);
+    } catch (error) {
+      console.log(error);
+    }
     setNameList("");
     setCircles([
-      { id: "1", color: "" },
-      { id: "2", color: "" },
-      { id: "3", color: "" },
-      { id: "4", color: "" },
-      { id: "5", color: "" },
+      { circleId: "1", color: "" },
+      { circleId: "2", color: "" },
+      { circleId: "3", color: "" },
+      { circleId: "4", color: "" },
+      { circleId: "5", color: "" },
     ]);
-    setActiveCircle({ id: "", color: "" });
+    setActiveCircle({ circleId: "", color: "" });
   };
-
-  useEffect(() => {
-    saveInLocalStorage();
-  }, [saveInLocalStorage]);
 
   return (
     <section>
