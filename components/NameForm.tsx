@@ -125,9 +125,9 @@ const Container = styled.div`
 
   @media (min-width: 390px) {
     font-size: 24px;
-    width: 100%;
   }
   @media (min-width: 768px) {
     margin-top: 0;
+    width: 100%;
   }
 `;
