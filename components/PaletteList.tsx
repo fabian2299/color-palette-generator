@@ -17,7 +17,7 @@ export default function PaletteList({
 }: Props) {
   const deletePalette = async (id: string) => {
     try {
-      await axios.delete(`${process.env.API_URL}/api/{id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/api/${id}`);
       setCircleList(circleList.filter((circle) => circle.id !== id));
     } catch (error) {
       console.log(error);

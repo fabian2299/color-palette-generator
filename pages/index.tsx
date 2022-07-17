@@ -49,7 +49,9 @@ export default function Home() {
 
   const fetchCircles = async () => {
     try {
-      const { data } = await axios.get(`${process.env.API_URL}/api`);
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api`
+      );
       setCircleList(data);
     } catch (error) {
       console.log(error);
